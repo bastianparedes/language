@@ -28,6 +28,7 @@ const box = requireElement<HTMLDivElement>('#transcripcion');
 const audioSource = requireElement<HTMLSelectElement>('#fuente-audio');
 const inputLanguage = requireElement<HTMLSelectElement>('#idioma-entrada');
 const outputLanguage = requireElement<HTMLSelectElement>('#idioma-salida');
+const swapLanguages = requireElement<HTMLButtonElement>('#invertir-idiomas');
 const statusElement = requireElement<HTMLHeadingElement>('#estado');
 
 type LanguageCode = keyof typeof languageNames;
@@ -79,6 +80,17 @@ inputLanguage.addEventListener('change', () => {
   ipcRenderer.send('set-input-language', inputLanguage.value);
 });
 outputLanguage.addEventListener('change', () => {
+  swapLanguages.disabled = outputLanguage.value === '';
+  ipcRenderer.send('set-output-language', outputLanguage.value);
+  updateStatus();
+});
+swapLanguages.addEventListener('click', () => {
+  if (!isLanguageCode(outputLanguage.value)) return;
+
+  const previousInputLanguage = inputLanguage.value;
+  inputLanguage.value = outputLanguage.value;
+  outputLanguage.value = previousInputLanguage;
+  ipcRenderer.send('set-input-language', inputLanguage.value);
   ipcRenderer.send('set-output-language', outputLanguage.value);
   updateStatus();
 });

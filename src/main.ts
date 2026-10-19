@@ -112,6 +112,8 @@ function createWindow() {
         .control { display: flex; flex: 1; flex-direction: column; gap: 0.4rem; }
         label { color: #cbd5e1; font-size: 0.9rem; }
         select { background: #0f172a; color: #f8fafc; border: 1px solid #475569; border-radius: 0.4rem; padding: 0.6rem; font: inherit; }
+        #invertir-idiomas { align-self: flex-end; background: #0f172a; color: #f8fafc; border: 1px solid #475569; border-radius: 0.4rem; padding: 0.6rem; font: inherit; cursor: pointer; }
+        #invertir-idiomas:disabled { cursor: not-allowed; opacity: 0.5; }
         .pulse { width: 12px; height: 12px; background: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         #transcripcion { font-size: 1.1rem; line-height: 1.5; overflow-y: auto; background: #0f172a; padding: 1rem; border-radius: 0.5rem; border: 1px solid #334155; flex-grow: 1; word-break: break-word; }
@@ -136,6 +138,7 @@ function createWindow() {
               ${inputLanguageOptions}
             </select>
           </div>
+          <button id="invertir-idiomas" type="button" aria-label="Invertir idiomas" title="Invertir idiomas" ${idiomaDestino === '' ? 'disabled' : ''}>⇄</button>
           <div class="control">
             <label for="idioma-salida">Idioma de salida</label>
             <select id="idioma-salida">
