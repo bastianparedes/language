@@ -1,0 +1,33 @@
+{
+  "name": "language",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/bastianparedes/language#readme",
+  "bugs": {
+    "url": "https://github.com/bastianparedes/language/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bastianparedes/language.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.renderer.json",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "start": "npm run build && electron ."
+  },
+  "dependencies": {
+    "@picovoice/pvrecorder-node": "^1.2.9",
+    "electron": "^44.7.0",
+    "vosk-koffi": "^1.1.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "^24.19.2",
+    "typescript": "^5.9.3"
+  }
+}

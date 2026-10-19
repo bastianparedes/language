@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "None",
+    "strict": true,
+    "types": ["node"],
+    "lib": ["ES2022", "DOM"],
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outFile": "dist/renderer.js",
+    "noEmitOnError": true
+  },
+  "include": ["src/renderer.ts"]
+}
