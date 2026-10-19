@@ -1,9 +1,19 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { PvRecorder } from '@picovoice/pvrecorder-node';
-import { app, BrowserWindow, type IpcMainEvent, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  type IpcMainEvent,
+  ipcMain,
+} from 'electron';
 import { listenMicrophone, listenSpeaker } from './services/audio';
-import { translate } from './services/ia';
+import {
+  ensureOllamaAvailable,
+  shutdownOllama,
+  translate,
+} from './services/ia';
 import {
   AVAILABLE_LANGUAGES,
   isLanguageCode,
@@ -58,6 +68,7 @@ let mainWindow: BrowserWindow | null = null;
 let audioController: AbortController | null = null;
 let requestedAudioSource: AudioSource = 'microphone';
 let isQuitting = false;
+let isShuttingDownOllama = false;
 
 function createWindow() {
   const rendererScript = readFileSync(
@@ -147,6 +158,20 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  try {
+    await ensureOllamaAvailable();
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Error desconocido.';
+    console.error('Ollama no está disponible:', error);
+    dialog.showErrorBox(
+      'Ollama no disponible',
+      `${message}\n\nInicia Ollama y vuelve a abrir la aplicación.`,
+    );
+    app.quit();
+    return;
+  }
+
   createWindow();
 
   function updateWindowTitle() {
@@ -263,7 +288,20 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-app.on('before-quit', () => {
+app.on('before-quit', (event) => {
   isQuitting = true;
   if (audioController) audioController.abort();
+  if (isShuttingDownOllama) return;
+
+  isShuttingDownOllama = true;
+  event.preventDefault();
+  void shutdownOllama()
+    .then(() => app.quit())
+    .catch((error: unknown) => {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido.';
+      console.error('No se pudo apagar Ollama:', error);
+      dialog.showErrorBox('No se pudo apagar Ollama', message);
+      app.exit(1);
+    });
 });
